@@ -86,12 +86,12 @@ class  Draglist extends React.Component{
 		      data: {text: this.state.value, isDone: false},
 		    };
 		    
-		    this.state.todos = [newItem].concat(this.state.todos);
+            this.state.todos = [...this.state.todos, newItem];
 		    e.target.value = '';
 		    // append at head
 		    this.setState({
 		    	todos: this.state.todos,
-		    	order:range(this.state.todos.length),
+		    	order:[this.state.todos.length - 1, ...this.state.order],
 		    	value:e.target.value
 		    });
 		    console.log("33333")
@@ -113,14 +113,14 @@ class  Draglist extends React.Component{
 	      data: {text: this.state.value, isDone: false},
 	    };
 	    
-	    this.state.todos = [newItem].concat(this.state.todos);
+	    this.state.todos = [...this.state.todos, newItem];
 	   
 	  const input = this.refs.myInput;
 	  input.value =this.state.value = '';
-	   
+
 	   this.setState({
 	    	todos:this.state.todos,
-	    	order:range(this.state.todos.length),
+	    	order:[this.state.todos.length - 1, ...this.state.order],
 	    	value:input.value
 	    })
 	    
@@ -217,7 +217,7 @@ class  Draglist extends React.Component{
   		//console.log("order--- ", order)
   		//console.log({isPressed, topDeltay, order, originalPosOfLastPressed, todos})
   	let num =0;
-		let that = this;
+        let that = this;
 		return(
 			<div>
 				<h2>This is Todolist</h2>
