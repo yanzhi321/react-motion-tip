@@ -86,12 +86,12 @@ class  Draglist extends React.Component{
 		      data: {text: this.state.value, isDone: false},
 		    };
 		    
-		    this.state.todos = [newItem].concat(this.state.todos);
+            this.state.todos = [...this.state.todos, newItem];
 		    e.target.value = '';
 		    // append at head
 		    this.setState({
 		    	todos: this.state.todos,
-		    	order:range(this.state.todos.length),
+		    	order:[this.state.todos.length - 1, ...this.state.order],
 		    	value:e.target.value
 		    });
 		    console.log("33333")
@@ -113,14 +113,14 @@ class  Draglist extends React.Component{
 	      data: {text: this.state.value, isDone: false},
 	    };
 	    
-	    this.state.todos = [newItem].concat(this.state.todos);
+	    this.state.todos = [...this.state.todos, newItem];
 	   
 	  const input = this.refs.myInput;
 	  input.value =this.state.value = '';
-	   
+
 	   this.setState({
 	    	todos:this.state.todos,
-	    	order:range(this.state.todos.length),
+	    	order:[this.state.todos.length - 1, ...this.state.order],
 	    	value:input.value
 	    })
 	    
@@ -148,13 +148,26 @@ class  Draglist extends React.Component{
 	//delete
 	deleteData = (date) =>{
 		
-		//console.log("date----"+date);
-		this.state.todos = this.state.todos.filter( ({time}) => time !== date );
-		//console.log(this.state.todos);
+		let index = -1;
+		this.state.todos.forEach(({time}, i) => {
+			if (time === date) {
+				index = i;
+			}
+		});
+		const newTodos = [...this.state.todos.slice(0, index), ...this.state.todos.slice(index + 1, this.state.todos.length)];
+
+		const inOrderIndex = this.state.order.indexOf(index);
+		let newOrder = [...this.state.order.slice(0, inOrderIndex), ...this.state.order.slice(inOrderIndex + 1, this.state.order.length)];
+		newOrder = newOrder.map(i => {
+			if (i > index) {
+				return i - 1;
+			}
+			return i;
+		});
 		
 		this.setState({
-			todos:this.state.todos,
-			order:range(this.state.todos.length)
+			todos:newTodos,
+			order:newOrder
 		})
 		
 	}
@@ -217,7 +230,7 @@ class  Draglist extends React.Component{
   		//console.log("order--- ", order)
   		//console.log({isPressed, topDeltay, order, originalPosOfLastPressed, todos})
   	let num =0;
-		let that = this;
+        let that = this;
 		return(
 			<div>
 				<h2>This is Todolist</h2>
