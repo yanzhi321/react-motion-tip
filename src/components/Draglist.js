@@ -148,13 +148,26 @@ class  Draglist extends React.Component{
 	//delete
 	deleteData = (date) =>{
 		
-		//console.log("date----"+date);
-		this.state.todos = this.state.todos.filter( ({time}) => time !== date );
-		//console.log(this.state.todos);
+		let index = -1;
+		this.state.todos.forEach(({time}, i) => {
+			if (time === date) {
+				index = i;
+			}
+		});
+		const newTodos = [...this.state.todos.slice(0, index), ...this.state.todos.slice(index + 1, this.state.todos.length)];
+
+		const inOrderIndex = this.state.order.indexOf(index);
+		let newOrder = [...this.state.order.slice(0, inOrderIndex), ...this.state.order.slice(inOrderIndex + 1, this.state.order.length)];
+		newOrder = newOrder.map(i => {
+			if (i > index) {
+				return i - 1;
+			}
+			return i;
+		});
 		
 		this.setState({
-			todos:this.state.todos,
-			order:range(this.state.todos.length)
+			todos:newTodos,
+			order:newOrder
 		})
 		
 	}
