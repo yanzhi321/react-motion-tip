@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 //引入react-router link模块
-import {Link,IndexLink} from 'react-router';
+import {Link} from 'react-router';
 //import './components/static/css/basic.css';
 import './App.css'
 import './components/static/css/basic.css';
@@ -31,25 +31,24 @@ class App extends Component {
 			return (
 				
 				<div className="App">
-						<div className = "header">
-						
-								<ul className="header_nav"> 
-											{/*<li><IndexLink to="/" activeClassName="active">home</IndexLink></li>*/}
-											<li><Link to="/"  activeClassName="active" onlyActiveOnIndex={true}>Simple</Link></li>
-	                    <li><Link to="/chat" activeClassName="active" >Chat</Link></li>
-	                    <li><Link to="/ball" activeClassName="active" >Ball</Link></li>
-	                    <li><Link to="/mvclist" activeClassName="active">Mvclist</Link></li>
-	                    <li><Link to="/gallery" activeClassName="active">Gallery</Link></li>
-	                    <li><Link to="/chooser" activeClassName="active" >Chooser</Link></li>
-	                    <li><Link to="/water" activeClassName="active" >Water</Link></li>
-	                    <li><Link to="/draglist" activeClassName="active">Draglist</Link></li>
-								</ul>
-						
-						</div>
-						
-						<div className="content">
-                   {this.props.children}
-            </div>
+                    <div className = "header">
+                    
+                        <ul className="header_nav"> 
+                            <li><Link to="/"  activeClassName="active" onlyActiveOnIndex={true}>Simple</Link></li>
+                            <li><Link to="/chat" activeClassName="active" >Chat</Link></li>
+                            <li><Link to="/ball" activeClassName="active" >Ball</Link></li>
+                            <li><Link to="/mvclist" activeClassName="active">Mvclist</Link></li>
+                            <li><Link to="/gallery" activeClassName="active">Gallery</Link></li>
+                            <li><Link to="/chooser" activeClassName="active" >Chooser</Link></li>
+                            <li><Link to="/water" activeClassName="active" >Water</Link></li>
+                            <li><Link to="/draglist" activeClassName="active">Draglist</Link></li>
+                        </ul>
+                    
+                    </div>
+                    
+                    <div className="content">
+                        {this.props.children}
+                    </div>
 						
 				</div>
 				

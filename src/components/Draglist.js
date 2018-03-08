@@ -1,5 +1,5 @@
 import React from 'react';
-import {Motion, spring, TransitionMotion, presets} from 'react-motion';
+import {Motion, spring} from 'react-motion';
 import range from 'lodash.range';
 
 import './static/css/draglist.css'
@@ -22,11 +22,12 @@ function clamp(n, min, max) {
 const springConfig = {stiffness: 300, damping: 50};
 
 let todosInit  = [
-		        {time: 't1', data: {text: 'Board the plane', isDone: false}},
-		        {time: 't2', data: {text: 'Sleep', isDone: false}},
-		        {time: 't3', data: {text: 'Try to finish conference slides', isDone: false}},
-		        {time: 't4', data: {text: 'Eat cheese and drink wine', isDone: false}},
-					]
+        {time: 't1', data: {text: 'Board the plane', isDone: false}},
+        {time: 't2', data: {text: 'Sleep', isDone: false}},
+        {time: 't3', data: {text: 'Try to finish conference slides', isDone: false}},
+        {time: 't4', data: {text: 'Eat cheese and drink wine', isDone: false}},
+]
+
 class  Draglist extends React.Component{
 	
 	
@@ -39,9 +40,9 @@ class  Draglist extends React.Component{
 			todos:todosInit,
 			order: range(todosInit.length),
 			topDeltaY: 0,
-     	mouseY: 0,
-      isPressed: false,
-      originalPosOfLastPressed: 0,
+            mouseY: 0,
+            isPressed: false,
+            originalPosOfLastPressed: 0,
 		};
 		
 		this.lock = false;
@@ -50,7 +51,7 @@ class  Draglist extends React.Component{
 	
 	componentDidMount(){
 		
-			window.addEventListener('touchmove', this.handleTouchMove);
+		window.addEventListener('touchmove', this.handleTouchMove);
 	    window.addEventListener('touchend', this.handleMouseUp);
 	    window.addEventListener('mousemove', this.handleMouseMove);
 	    window.addEventListener('mouseup', this.handleMouseUp);
@@ -59,7 +60,13 @@ class  Draglist extends React.Component{
 	
 	//tempelets 
     componentWillUnmount(){  
-        this.lock = true;  
+        this.lock = true; 
+        //clear dom operator in componentDidMount period
+        window.removeEventListener('touchmove', this.handleTouchMove)
+        window.removeEventListener('touchend', this.handleMouseUp)
+        window.removeEventListener('mousemove', this.handleMouseMove)
+        window.removeEventListener('mouseup', this.handleMouseUp)
+        
     } 
 	
 	
@@ -70,66 +77,52 @@ class  Draglist extends React.Component{
 	
 	//keyBind
 	keyBind = (e) =>{
-		
-		console.log("222")
-		
-		if(e.keyCode == 13 && this.state.order.length >= 0){
+        
+        
+		if(e.keyCode === 13 && this.state.order.length >= 0){
 			
-			if(this.state.value == ''){
+			if(this.state.value === ''){
 				alert("Please input")
 				return;
 			}
 			
-			 e.preventDefault();
+			e.preventDefault();
 		    const newItem = {
-		      time: 't' + Date.now(),
-		      data: {text: this.state.value, isDone: false},
+                time: 't' + Date.now(),
+                data: {text: this.state.value, isDone: false},
 		    };
 		    
             this.state.todos = [...this.state.todos, newItem];
 		    e.target.value = '';
 		    // append at head
 		    this.setState({
-		    	todos: this.state.todos,
+		    	todos: [...this.state.todos, newItem],
 		    	order:[this.state.todos.length - 1, ...this.state.order],
 		    	value:e.target.value
 		    });
-		    console.log("33333")
-		    //console.log(newItem)
+		    
 		}
 	}
 	
 	//add
 	addData = (e) =>{
-		
-		//input is ''
-			/*if(this.state.value == ''){
-				alert("Please input")
-				return;
-			}*/
-			
+            
 	    const newItem = {
-	      time: 't'+ Date.now(),
-	      data: {text: this.state.value, isDone: false},
+            time: 't'+ Date.now(),
+            data: {text: this.state.value, isDone: false}
 	    };
-	    
-	    this.state.todos = [...this.state.todos, newItem];
+        
+        this.state.todos = [...this.state.todos, newItem];
 	   
-	  const input = this.refs.myInput;
-	  input.value =this.state.value = '';
+	    const input = this.refs.myInput;
+	    input.value = '';
 
-	   this.setState({
-	    	todos:this.state.todos,
+	    this.setState({
+	    	todos: [...this.state.todos, newItem],
 	    	order:[this.state.todos.length - 1, ...this.state.order],
 	    	value:input.value
 	    })
 	    
-	    // append at head
-	   // this.setState({todos: [newItem].concat(this.state.todos)});
-	    //添加之后为空
-	  	//const input = this.refs.myInput;
-	  	//input.value ='';
-	  	
 	}
 	
 	
@@ -139,7 +132,8 @@ class  Draglist extends React.Component{
 		this.setState({
 			todos: this.state.todos.filter( ({data}) => data.isDone ),
 			order: range(this.state.length)
-		})
+        })
+        
 		console.log(this.state.todos.map((con,i) => {
 			return i;
 		}));
@@ -178,10 +172,10 @@ class  Draglist extends React.Component{
   	};
   
 
-  handleTouchMove = (e) => {
-    e.preventDefault();
-    this.handleMouseMove(e.touches[0]);
-  };
+    handleTouchMove = (e) => {
+        // e.preventDefault();
+        this.handleMouseMove(e.touches[0]);
+    };
 
 	
 	handleMouseDown = (pos, pressY, {pageY}) => {
@@ -191,45 +185,41 @@ class  Draglist extends React.Component{
 	      isPressed: true,
 	      originalPosOfLastPressed: pos,
 	    });
-  };
+    };
 
   
-  handleMouseMove = (e) => {
-    const {isPressed, topDeltaY, order, originalPosOfLastPressed,todos} = this.state;
-    //console.log({todos})
-    //console.log({pageY})
-    //console.log({topDeltaY})//距离顶部距离
-    
-    e.preventDefault();
-    
-    if (isPressed) {
-      const mouseY = e.pageY - topDeltaY;
-      const currentRow = clamp(Math.round(mouseY / 100), 0, order.length - 1);
-      
-      console.log('mouseY----'+mouseY);
-      console.log('topDeltaY---'+topDeltaY)
-      
-      let newOrder = order;
-
-      if (currentRow !== order.indexOf(originalPosOfLastPressed)){
-        newOrder = reinsert(order, order.indexOf(originalPosOfLastPressed), currentRow);
+    handleMouseMove = (e) => {
+        const {isPressed, topDeltaY, order, originalPosOfLastPressed } = this.state;
         
-      }
-      this.setState({mouseY: mouseY, order: newOrder});
-    }
-    
-  };
+        
+        // e.preventDefault();
+        
+        if (isPressed) {
+            const mouseY = e.pageY - topDeltaY;
+            const currentRow = clamp(Math.round(mouseY / 100), 0, order.length - 1);
+            
+            console.log('mouseY----'+mouseY);
+            console.log('topDeltaY---'+topDeltaY)
+            
+            let newOrder = order;
 
-  handleMouseUp = () => {
-    this.setState({isPressed: false, topDeltaY: 0});
-  };
+            if (currentRow !== order.indexOf(originalPosOfLastPressed)){
+                newOrder = reinsert(order, order.indexOf(originalPosOfLastPressed), currentRow);
+                
+            }
+            this.setState({mouseY: mouseY, order: newOrder});
+        }
+        
+    };
+
+    handleMouseUp = () => {
+        this.setState({isPressed: false, topDeltaY: 0});
+    };
 	
 	
 	render(){
-  		const {mouseY, isPressed, topDeltay,  originalPosOfLastPressed, order, value ,todos} = this.state;
-  		//console.log("order--- ", order)
-  		//console.log({isPressed, topDeltay, order, originalPosOfLastPressed, todos})
-  	let num =0;
+  		const {mouseY, isPressed,   originalPosOfLastPressed, order, todos} = this.state;
+  	    
         let that = this;
 		return(
 			<div>
@@ -258,42 +248,44 @@ class  Draglist extends React.Component{
 						
 						<ul className="demo8">
 							{
-								order.map( i => {
-									const style = originalPosOfLastPressed === i && isPressed
-							            ? {
-							                scale: spring(1.1, springConfig),
-							                shadow: spring(16, springConfig),//springConfig = {stiffness: 300, damping: 50};
-							                y: mouseY,
-							              }
-							            : {
-							                scale: spring(1, springConfig),
-							                shadow: spring(1, springConfig),
-							                y: spring( order.indexOf(i) * 100, springConfig),
-							              };	
-							              
-									 return (
-				
-							            <Motion  style={style} key={todos[i].time}>
-							              {({scale, shadow, y}) =>
-							                <li
-							                	
-							                  onMouseDown={this.handleMouseDown.bind(null, i, y)}
-							                   onTouchStart={this.handleTouchStart.bind(null, i, y)}
-							                  className="demo8-item"
-							                  style={{
-							                    boxShadow: `rgba(0, 0, 0, 0.2) 0px ${shadow}px ${2 * shadow}px 0px`,
-							                    transform: `translate3d(0, ${y}px, 0) scale(${scale})`,
-							                    WebkitTransform: `translate3d(0, ${y}px, 0) scale(${scale})`,
-							                    zIndex: i === originalPosOfLastPressed ? 99 : i,
-							                   	
-							                  }}>
-							                
-							                   {order.indexOf(i)}---{todos[i].data.text} -- <button className="destroy"  onClick={that.deleteData.bind(that,todos[i].time)}></button>
-							                </li>
-							              }
-							            </Motion>
-					          		)})
-										}
+                                order.map( i => {
+                                    const style = originalPosOfLastPressed === i && isPressed
+                                        ? {
+                                            scale: spring(1.1, springConfig),
+                                            shadow: spring(16, springConfig),//springConfig = {stiffness: 300, damping: 50};
+                                            y: mouseY,
+                                        }
+                                        : {
+                                            scale: spring(1, springConfig),
+                                            shadow: spring(1, springConfig),
+                                            y: spring( order.indexOf(i) * 100, springConfig),
+                                        };	
+                                        
+                                    return (
+                
+                                        <Motion  style={style} key={todos[i].time}>
+                                        {({scale, shadow, y}) =>
+                                            <li
+                                                
+                                                onMouseDown={this.handleMouseDown.bind(null, i, y)}
+                                                onTouchStart={this.handleTouchStart.bind(null, i, y)}
+                                                className="demo8-item"
+                                                style={{
+                                                    boxShadow: `rgba(0, 0, 0, 0.2) 0px ${shadow}px ${2 * shadow}px 0px`,
+                                                    transform: `translate3d(0, ${y}px, 0) scale(${scale})`,
+                                                    WebkitTransform: `translate3d(0, ${y}px, 0) scale(${scale})`,
+                                                    zIndex: i === originalPosOfLastPressed ? 99 : i,
+                                                    
+                                                }}
+                                            >
+                                            
+                                                {order.indexOf(i)}---{todos[i].data.text} -- <button className="destroy"  onClick={that.deleteData.bind(that,todos[i].time)}></button>
+                                            </li>
+                                        }
+                                        </Motion>
+                                    )
+                                })
+							}
 							
 						</ul>
 						

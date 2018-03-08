@@ -14,74 +14,82 @@ class Chooser extends React.Component {
 		super(props);
 		this.state = {
 			delta: [0, 0],
-      mouse: [0, 0],
-      isPressed: false,
-      firstConfig: [60, 5],
-      slider: {dragged: null, num: 0},
-      lastPressed: [0, 0],
+            mouse: [0, 0],
+            isPressed: false,
+            firstConfig: [60, 5],
+            slider: {dragged: null, num: 0},
+            lastPressed: [0, 0],
 		}
 	};
 	
 	componentDidMount() {
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-    window.addEventListener('touchend', this.handleMouseUp);
-  };
+        window.addEventListener('mousemove', this.handleMouseMove);
+        window.addEventListener('touchmove', this.handleTouchMove);
+        window.addEventListener('mouseup', this.handleMouseUp);
+        window.addEventListener('touchend', this.handleMouseUp);
+    };
 
-  handleTouchStart = (pos, press, e) => {
-    this.handleMouseDown(pos, press, e.touches[0]);
-  };
-
-  handleMouseDown = (pos, [pressX, pressY], {pageX, pageY}) => {
-    this.setState({
-      delta: [pageX - pressX, pageY - pressY],
-      mouse: [pressX, pressY],
-      isPressed: true,
-      lastPressed: pos,
-    });
-  };
-
-  handleTouchMove = (e) => {
-    if (this.state.isPressed) {
-      e.preventDefault();
+    //remove componentDidMount dom
+    componentWillUnmount() {
+        window.removeEventListener('mousemove', this.handleMouseMove)
+        window.removeEventListener('touchmove', this.handleTouchMove)
+        window.removeEventListener('mouseup', this.handleMouseUp)
+        window.removeEventListener('touchend', this.handleMouseUp)
     }
-    this.handleMouseMove(e.touches[0]);
-  };
 
-  handleMouseMove = ({pageX, pageY}) => {
-    const {isPressed, delta: [dx, dy]} = this.state;
-    if (isPressed) {
-      this.setState({mouse: [pageX - dx, pageY - dy]});
-    }
-  };
+    handleTouchStart = (pos, press, e) => {
+        this.handleMouseDown(pos, press, e.touches[0]);
+    };
 
-  handleMouseUp = () => {
-    this.setState({
-      isPressed: false,
-      delta: [0, 0],
-      slider: {dragged: null, num: 0},
-    });
-  };
+    handleMouseDown = (pos, [pressX, pressY], {pageX, pageY}) => {
+        this.setState({
+            delta: [pageX - pressX, pageY - pressY],
+            mouse: [pressX, pressY],
+            isPressed: true,
+            lastPressed: pos,
+        });
+    };
 
-  handleChange = (constant, num, {target}) => {
-    const {firstConfig: [s, d]} = this.state;
-    if (constant === 'stiffness') {
-      this.setState({
-        firstConfig: [target.value - num * 30, d],
-      });
-    } else {
-      this.setState({
-        firstConfig: [s, target.value - num * 2],
-      });
-    }
-  };
+    handleTouchMove = (e) => {
+        if (this.state.isPressed) {
+            e.preventDefault();
+        }
+        this.handleMouseMove(e.touches[0]);
+    };
 
-  handleMouseDownInput = (constant, num) => {
-    this.setState({
-      slider: {dragged: constant, num: num},
-    });
-  };
+    handleMouseMove = ({pageX, pageY}) => {
+        const {isPressed, delta: [dx, dy]} = this.state;
+        if (isPressed) {
+            this.setState({mouse: [pageX - dx, pageY - dy]});
+        }
+    };
+
+    handleMouseUp = () => {
+        this.setState({
+        isPressed: false,
+        delta: [0, 0],
+        slider: {dragged: null, num: 0},
+        });
+    };
+
+    handleChange = (constant, num, {target}) => {
+        const {firstConfig: [s, d]} = this.state;
+        if (constant === 'stiffness') {
+        this.setState({
+            firstConfig: [target.value - num * 30, d],
+        });
+        } else {
+        this.setState({
+            firstConfig: [s, target.value - num * 2],
+        });
+        }
+    };
+
+    handleMouseDownInput = (constant, num) => {
+        this.setState({
+        slider: {dragged: constant, num: num},
+        });
+    };
 	
   render() {
   	

@@ -6,22 +6,20 @@ import './static/css/simple.css'
 class Simple extends React.Component {
 	
 	constructor(props) {
-    super(props);
-    this.state = {
-    	open: false,
-    	hour:0,
-    	minute:0,
-    	second:0,
-    	time:0
+        super(props);
+        this.state = {
+            open: false,
+            hour:0,
+            minute:0,
+            second:0,
+            time:0
+        };
+        
+        this.timer = 0
     };
-    this.lock = false;
-  };
 	
 	
-	componentWillUnmount(){
-		//移除dom及组件操作
-		this.locak = true;
-	}
+	
 	
 	componentDidMount(){
 		
@@ -40,19 +38,24 @@ class Simple extends React.Component {
 		}.bind(this);
 		
 		func();
-		setInterval(func,1000);
+		this.timer = setInterval(func, 1000);
 		
 	}
 
+    componentWillUnmount(){
+		//移除dom及组件操作
+        this.lock = true;
+        clearInterval(this.timer)
+	}
 	
-  handleMouseDown = () => {
-    this.setState({open: !this.state.open});
-  };
+    handleMouseDown = () => {
+        this.setState({open: !this.state.open});
+    };
 
-  handleTouchStart = (e) => {
-    e.preventDefault();
-    this.handleMouseDown();
-  };
+    handleTouchStart = (e) => {
+        e.preventDefault();
+        this.handleMouseDown();
+    };
 	
 	
   render() {

@@ -17,41 +17,41 @@ class Gallery extends React.Component {
 	};
 	
 	handleChange = ({target: {value}}) => {
-    this.setState({currPhoto: value});
-  };
+        this.setState({currPhoto: value});
+    };
 
-  clickHandler = (btn) => {
-    let photoIndex = btn === NEXT ? this.state.currPhoto+1 : this.state.currPhoto-1;
+    clickHandler = (btn) => {
+        let photoIndex = btn === NEXT ? this.state.currPhoto+1 : this.state.currPhoto-1;
 
-    photoIndex = photoIndex >= 0 ? photoIndex : this.state.photos.length - 1;
-    photoIndex = photoIndex >= this.state.photos.length ? 0 : photoIndex;
+        photoIndex = photoIndex >= 0 ? photoIndex : this.state.photos.length - 1;
+        photoIndex = photoIndex >= this.state.photos.length ? 0 : photoIndex;
 
-    this.setState({
-      currPhoto: photoIndex
-    })
-  };
+        this.setState({
+            currPhoto: photoIndex
+        })
+    };
   
 	
-  render() {
+    render() {
   	
-  	const {photos, currPhoto} = this.state;
-    const [currWidth, currHeight] = photos[currPhoto];
+        const {photos, currPhoto} = this.state;
+        const [currWidth, currHeight] = photos[currPhoto];
 
-    const widths = photos.map(([origW, origH]) => currHeight / origH * origW);
+        const widths = photos.map(([origW, origH]) => currHeight / origH * origW);
 
-    const leftStartCoords = widths
-      .slice(0, currPhoto)
-      .reduce((sum, width) => sum - width, 0);
+        const leftStartCoords = widths
+        .slice(0, currPhoto)
+        .reduce((sum, width) => sum - width, 0);
 
-    let configs = [];
-    photos.reduce((prevLeft, [origW, origH], i) => {
-      configs.push({
-        left: spring(prevLeft, springSettings),
-        height: spring(currHeight, springSettings),
-        width: spring(widths[i], springSettings),
-      });
-      return prevLeft + widths[i];
-    }, leftStartCoords);
+        let configs = [];
+        photos.reduce((prevLeft, [origW, origH], i) => {
+        configs.push({
+            left: spring(prevLeft, springSettings),
+            height: spring(currHeight, springSettings),
+            width: spring(widths[i], springSettings),
+        });
+        return prevLeft + widths[i];
+        }, leftStartCoords);
   	
     return (
       <div>
@@ -72,7 +72,7 @@ class Gallery extends React.Component {
                   <Motion key={i} style={style}>
                     {style =>
                      /* <img className="demo4-photo" src={`${i}.jpg`} style={style} />*/
-                      <img className="demo4-photo" src={require('./static/img/gallery/'+i+'.jpg')} style={style} />
+                      <img className="demo4-photo" src={require('./static/img/gallery/'+i+'.jpg')} style={style} alt="tip" />
                     }
                   </Motion>
                 )}

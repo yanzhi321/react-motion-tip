@@ -4,7 +4,7 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 //引入react-router
-import { Router, Route,Link,browserHistory,IndexRoute } from 'react-router';
+import { Router, Route,browserHistory,IndexRoute } from 'react-router';
 
 import Simple from './components/Simple';
 import Chat from './components/Chat';

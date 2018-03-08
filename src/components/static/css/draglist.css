@@ -28,8 +28,9 @@
 
 
   .demo8 {
-    width: 400px;
+    max-width: 400px;
     height: 400px;
+    overflow: hidden;
     margin:0 auto;
     
   }
@@ -39,6 +40,7 @@
     position: absolute;
     width: 320px;
     height: 90px;
+    margin: 0 auto;
     overflow: visible;
     pointer-events: auto;
     transform-origin: 50% 50% 0px;
@@ -68,9 +70,10 @@
   }
   
 .input-text {
-	width: 400px;
+	max-width: 400px;
 	height: 60px;
-	margin: 10px auto;
+    margin: 10px auto;
+    overflow: hidden;
 }
 
 .input-text input {

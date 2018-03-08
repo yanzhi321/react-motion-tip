@@ -36,55 +36,65 @@ class Ball extends React.Component {
 	
 	constructor(props) {
     super(props);
-    this.state = {
-      mouseXY: [0, 0],
-      mouseCircleDelta: [0, 0], // difference between mouse and circle pos for x + y coords, for dragging
-      lastPress: null, // key of the last pressed component
-      isPressed: false,
-      order: range(count), // index: visual position. value: component key/id
+        this.state = {
+            mouseXY: [0, 0],
+            mouseCircleDelta: [0, 0], // difference between mouse and circle pos for x + y coords, for dragging
+            lastPress: null, // key of the last pressed component
+            isPressed: false,
+            order: range(count), // index: visual position. value: component key/id
+        };
+
     };
-  };
   
-	 componentDidMount() {
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('touchend', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-  };
-	
-	 handleTouchStart = (key, pressLocation, e) => {
-    this.handleMouseDown(key, pressLocation, e.touches[0]);
-  };
-
-  handleTouchMove = (e) => {
-    e.preventDefault();
-    this.handleMouseMove(e.touches[0]);
-  };
-  
-   handleMouseMove = ({pageX, pageY}) => {
-    const {order, lastPress, isPressed, mouseCircleDelta: [dx, dy]} = this.state;
-    if (isPressed) {
-      const mouseXY = [pageX - dx, pageY - dy];
-      const col = clamp(Math.floor(mouseXY[0] / width), 0, 2);
-      const row = clamp(Math.floor(mouseXY[1] / height), 0, Math.floor(count / 3));
-      const index = row * 3 + col;
-      const newOrder = reinsert(order, order.indexOf(lastPress), index);
-      this.setState({mouseXY, order: newOrder});
+    componentDidMount() {
+        window.addEventListener('touchmove', this.handleTouchMove);
+        window.addEventListener('touchend', this.handleMouseUp);
+        window.addEventListener('mousemove', this.handleMouseMove);
+        window.addEventListener('mouseup', this.handleMouseUp);
+    };
+    
+    //Can only update a mounted or mounting component. This usually means you called setState() on an unmounted component.
+    componentWillUnmount() {
+        
+        window.removeEventListener('tochmove', this.handleTouchMove)
+        window.removeEventListener('touchend', this.handleMouseUp)
+        window.removeEventListener('mousemove', this.handleMouseMove)
+        window.removeEventListener('mouseup', this.handleMouseUp)
     }
-  };
-  
-  handleMouseDown = (key, [pressX, pressY], {pageX, pageY}) => {
-    this.setState({
-      lastPress: key,
-      isPressed: true,
-      mouseCircleDelta: [pageX - pressX, pageY - pressY],
-      mouseXY: [pressX, pressY],
-    });
-  };
 
-  handleMouseUp = () => {
-    this.setState({isPressed: false, mouseCircleDelta: [0, 0]});
-  };
+	handleTouchStart = (key, pressLocation, e) => {
+        this.handleMouseDown(key, pressLocation, e.touches[0]);
+    };
+
+    handleTouchMove = (e) => {
+        e.preventDefault();
+        this.handleMouseMove(e.touches[0]);
+    };
+  
+    handleMouseMove = ({pageX, pageY}) => {
+        const {order, lastPress, isPressed, mouseCircleDelta: [dx, dy]} = this.state;
+        if (isPressed) {
+            const mouseXY = [pageX - dx, pageY - dy];
+            const col = clamp(Math.floor(mouseXY[0] / width), 0, 2);
+            const row = clamp(Math.floor(mouseXY[1] / height), 0, Math.floor(count / 3));
+            const index = row * 3 + col;
+            const newOrder = reinsert(order, order.indexOf(lastPress), index);
+            this.setState({mouseXY, order: newOrder});
+        }
+    };
+  
+    handleMouseDown = (key, [pressX, pressY], {pageX, pageY}) => {
+        this.setState({
+        lastPress: key,
+        isPressed: true,
+        mouseCircleDelta: [pageX - pressX, pageY - pressY],
+        mouseXY: [pressX, pressY],
+        });
+    };
+
+    handleMouseUp = () => {
+        this.setState({isPressed: false, mouseCircleDelta: [0, 0]});
+    };
 
 	
   render() {
@@ -93,48 +103,48 @@ class Ball extends React.Component {
       <div>
         <h1>This is Ball</h1>
         <div className="demo2">
-        {order.map((_, key) => {
-          let style;
-          let x;
-          let y;
-          const visualPosition = order.indexOf(key);
-          if (key === lastPress && isPressed) {
-            [x, y] = mouseXY;
-            style = {
-              translateX: x,
-              translateY: y,
-              scale: spring(1.2, springSetting1),
-              boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-            };
-          } else {
-            [x, y] = layout[visualPosition];
-            style = {
-              translateX: spring(x, springSetting2),
-              translateY: spring(y, springSetting2),
-              scale: spring(1, springSetting1),
-              boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
-            };
-          }
-          return (
-            <Motion key={key} style={style}>
-              {({translateX, translateY, scale, boxShadow}) =>
-                <div
-                  onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
-                  onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
-                  className="demo2-ball"
-                  style={{
-                    backgroundColor: allColors[key],
-                    WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                    transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
-                    zIndex: key === lastPress ? 99 : visualPosition,
-                    boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
-                  }}
-                />
-              }
-            </Motion>
-          );
-        })}
-      </div>
+            {order.map((_, key) => {
+            let style;
+            let x;
+            let y;
+            const visualPosition = order.indexOf(key);
+            if (key === lastPress && isPressed) {
+                [x, y] = mouseXY;
+                style = {
+                translateX: x,
+                translateY: y,
+                scale: spring(1.2, springSetting1),
+                boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
+                };
+            } else {
+                [x, y] = layout[visualPosition];
+                style = {
+                translateX: spring(x, springSetting2),
+                translateY: spring(y, springSetting2),
+                scale: spring(1, springSetting1),
+                boxShadow: spring((x - (3 * width - 50) / 2) / 15, springSetting1),
+                };
+            }
+            return (
+                <Motion key={key} style={style}>
+                {({translateX, translateY, scale, boxShadow}) =>
+                    <div
+                    onMouseDown={this.handleMouseDown.bind(null, key, [x, y])}
+                    onTouchStart={this.handleTouchStart.bind(null, key, [x, y])}
+                    className="demo2-ball"
+                    style={{
+                        backgroundColor: allColors[key],
+                        WebkitTransform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                        transform: `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`,
+                        zIndex: key === lastPress ? 99 : visualPosition,
+                        boxShadow: `${boxShadow}px 5px 5px rgba(0,0,0,0.5)`,
+                    }}
+                    />
+                }
+                </Motion>
+            );
+            })}
+        </div>
       </div>
     );
   }

@@ -7,11 +7,14 @@ import './static/css/chat.css';
 class Chat extends React.Component {
 	
 	constructor(props){
+    
 		super(props)
 		this.state = {
 			x:250,
 			y:300
-		}
+    }
+    
+    this.lock = false;
 	};
 	
 	componentDidMount(){
@@ -19,7 +22,13 @@ class Chat extends React.Component {
 		window.addEventListener('mousemove',this.handleMouseMove);
 		window.addEventListener('touchmove',this.handleTouchMove)
 		
-	};
+    };
+  
+    componentWillUnmount() {
+        this.lock = false;
+        window.removeEventListener('mousemove', this.handleMouseMove)
+        window.removeEventListener('touchmove', this.handleTouchMove)
+    }
 	
 	handleMouseMove = ({pageX:x,pageY:y}) =>{
 		this.setState({x,y})
@@ -31,16 +40,16 @@ class Chat extends React.Component {
 	
 	
 	getStyles = (prevStyles) => {
-    const endValue = prevStyles.map((_, i) => {
-      return i === 0
-        ? this.state
-        : {
-          x: spring(prevStyles[i - 1].x, presets.gentle),
-          y: spring(prevStyles[i - 1].y, presets.gentle),
-        };
-    });
-    return endValue;
-  };
+        const endValue = prevStyles.map((_, i) => {
+        return i === 0
+            ? this.state
+            : {
+            x: spring(prevStyles[i - 1].x, presets.gentle),
+            y: spring(prevStyles[i - 1].y, presets.gentle),
+            };
+        });
+        return endValue;
+    };
 	
 	
   render() {
@@ -49,8 +58,8 @@ class Chat extends React.Component {
         <h1>This is Chat</h1>
         
          <StaggeredMotion
-        defaultStyles={range(6).map(() => ({x: 0, y: 0}))}
-        styles={this.getStyles}>
+            defaultStyles={range(6).map(() => ({x: 0, y: 0}))}
+            styles={this.getStyles}>
         {balls =>
           <div className="demo1">
             {balls.map(({x, y}, i) =>
